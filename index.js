@@ -1,31 +1,40 @@
+
+/*********************************************************  Starting the server using Expreess*********************************************** */
 const express=require('express')
 const path=require('path')
 const port=8000;
 
 const app=express();
+/********************************************************************************************************************************************* */
 
-//Setting the value for the property view engine
+
+/***********************************Telling express to use ejs View Engine */
 app.set('view engine','ejs')
+/***********************************Telling the name of the folder and specify the path where the views are stored(.ejs files) */
 app.set('views',path.join(__dirname,'views'))
 
-//Setting the parser
+//Setting the parser / MiddleWare  parses the data and convert it into key-value pair 
 app.use(express.urlencoded())
 
-//Middleware1
-app.use(function(req,res,next){               // next make the changes and passes too the nexxt middleware 
+/*****************************Middle Ware for Static Files  */
+app.use(express.static('assets'))
+/************************************Middleware1**/
+// app.use(function(req,res,next){               // next make the changes and passes too the nexxt middleware 
 
-    req.myName="Arpan"
-    console.log(" Middleware 1 Called")
-    next()              // The controll is pass sto the next middleware
-}) 
+//     req.myName="Arpan"
+//     console.log(" Middleware 1 Called")
+//     next()              // The controll is pass sto the next middleware
+// }) 
 
 // Middleware 2
-app.use(function(req,res,next){               // next make the changes and passes too the nexxt middleware 
 
-    console.log("My name from MW 2 ",req.myName)
-    console.log(" Middleware 2  Called")
-    next()              // The controll is pass sto the next middleware
-}) 
+/*****************************MiddelWare 2********** */
+// app.use(function(req,res,next){               // next make the changes and passes too the nexxt middleware 
+
+//     console.log("My name from MW 2 ",req.myName)
+//     console.log(" Middleware 2  Called")
+//     next()              // The controll is pass sto the next middleware
+// }) 
 
 var contactList=[
 
@@ -47,9 +56,9 @@ var contactList=[
 
 //Controller
 app.get("/",function(req,res){
-    console.log("From the get route controller ",req.myName)
+   // console.log("From the get route controller ",req.myName)
 
-    // passing the data from the server ro the browser 
+    // passing the data from the server to the browser if it returns now it renders the page and send it to home in res.locals but as locals is a global object we can access it as title instead of locals.title 
     //this is a type of context that we are passing
     return res.render('home',{
 
@@ -87,6 +96,22 @@ app.post('/create-contact',function(req,res){
 
 })
 
+app.get('/delete-contact/:phone',function(req,res){
+
+    console.log(req.params)
+    let phoneParam=req.params.phone;
+
+    let contactIndex=contactList.findIndex(contact=>contact.phone==phoneParam)
+
+    if(contactIndex != -1){
+
+        contactList.splice(contactIndex,1)
+    }
+
+    return res.redirect('back')
+     
+
+})
 
 //It listen to the request and provide the response 
 app.listen(port,function(err){

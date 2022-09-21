@@ -1,0 +1,44 @@
+body{
+   margin: 0;
+   padding: 0;
+   font-family: sans-serif;
+}
+
+#page-heading
+{
+    text-align: center;
+    margin-top: 25px;
+    color: grey;
+}
+/* #item{
+    display: flex;
+}
+/* #name{
+    margin-right: 180px;
+} */
+/* #phone{
+   scroll-margin-inline-start: 150px;
+}  */
+#tab{
+    /* display: table-cell; */
+    margin-left: 607px;
+}
+
+#form{
+    margin-top: 14px;
+    margin-left: 513px;
+}
+.table{
+    width: 327px;
+}
+.table-dark{
+    background-color: #007C93;
+}
+.row1:hover{
+    background-color: chartreuse;
+}
+.delete:hover{
+    background-color: red;
+    
+
+}
