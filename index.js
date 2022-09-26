@@ -4,6 +4,10 @@ const express=require('express')
 const path=require('path')
 const port=8000;
 
+/************************************************************For Connection With The DataBase*********************************************** */
+const db =require('./config/mongoose') 
+/*******************For Creating a Schema************* */
+const Contact1=require('./models/contact')   // Contact is comming here that is the collection name in the dataBase and we will access in index.js using the variable Contact1
 const app=express();
 /********************************************************************************************************************************************* */
 
@@ -60,12 +64,24 @@ app.get("/",function(req,res){
 
     // passing the data from the server to the browser if it returns now it renders the page and send it to home in res.locals but as locals is a global object we can access it as title instead of locals.title 
     //this is a type of context that we are passing
-    return res.render('home',{
 
-        title: "Contact List",
-        contact_list:contactList
-    
-    })
+
+    /*****************Fetchiong the data from the dataBase******************** */
+        Contact1.find({},function(err,contacts){
+            if(err){
+                console.log("Error in fetching contact from db")
+                return;
+            }
+            return res.render('home',{
+
+                title: "Contact List",
+                contact_list:contacts
+            
+            })
+
+
+        })
+   
     //res.send("<h1>Cool.It Is running !!!!!!!!!!!!!!!!!!!!!!!</h1>")
 })
 
@@ -85,29 +101,54 @@ app.post('/create-contact',function(req,res){
     console.log(req.body)
     console.log(req.body.my_name)
     console.log(req.body.my_phone)
-    contactList.push({
+    // contactList.push({
+    //     name:req.body.my_name,
+    //     phone:req.body.my_phone
+    // })
+
+    /**************Populating the Database when we enter contacts throught the form ********** */
+    /*****Contact1 is the variable defined which contains the Contact whichis exportes from the contact.js file in the models and it is the name of the Collection in the database  */
+ 
+    Contact1.create({
         name:req.body.my_name,
         phone:req.body.my_phone
+    },function(err,newContact){
+        if(err){
+            console.log("error in creating the contact")
+            return;
+        }
+        console.log("**************", newContact )
+        return res.redirect('/')
     })
     
-    return res.redirect('/')
+    // return res.redirect('/')
     // We can use alternate for going to home
     //return res.redirect('back')
 
 })
 
-app.get('/delete-contact/:phone',function(req,res){
+app.get('/delete-contact/:id',function(req,res){
 
     console.log(req.params)
-    let phoneParam=req.params.phone;
+    // get the is when the delete button is clicked the id is from the database  
+    let idParam=req.params.id;
 
-    let contactIndex=contactList.findIndex(contact=>contact.phone==phoneParam)
+    /********************This is when we are deleting using a static list  Now we will use the database****************/
 
-    if(contactIndex != -1){
+    // let contactIndex=contactList.findIndex(contact=>contact.phone==phoneParam)
 
-        contactList.splice(contactIndex,1)
-    }
+    // if(contactIndex != -1){
 
+    //     contactList.splice(contactIndex,1)
+    // }
+
+    /*****************************Now we delete from the databse    The below function is already defined ************ */
+    Contact1.findByIdAndDelete(idParam,function(err){
+        if(err){
+            console.log("Error in deleting the object from the datbase")
+            return
+        }
+    })
     return res.redirect('back')
      
 
